@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Player Stats")]
     public int maxHealth = 6;
+    private int startingHealth = 6;
     private int currentHealth;
     public float invincibilityDuration = 2f;
     private float lastDamageTime;
@@ -49,6 +50,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        currentHealth = startingHealth; // Initialize currentHealth
         // Create the player's visual sprite from the prefab
         if (playerSpritePrefab != null)
         {
