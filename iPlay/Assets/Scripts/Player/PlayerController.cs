@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour
     [Header("Player Stats")]
     public int maxHealth = 6;
     private int currentHealth;
+    public float invincibilityDuration = 2f;
+    private float lastDamageTime;
 
     [Header("Movement")]
     [Tooltip("How fast the player moves.")]
@@ -31,6 +33,7 @@ public class PlayerController : MonoBehaviour
     private Transform aimTransform;
     private Vector2 moveDirection;
     private Vector2 aimDirection;
+    private Animator animator;
 
     void Awake()
     {
@@ -50,6 +53,7 @@ public class PlayerController : MonoBehaviour
         if (playerSpritePrefab != null)
         {
             playerSpriteInstance = Instantiate(playerSpritePrefab, transform.position, Quaternion.identity, transform);
+            animator = playerSpriteInstance.GetComponent<Animator>();
         }
         else
         {
@@ -77,6 +81,7 @@ public class PlayerController : MonoBehaviour
     {
         // Handle aiming logic in Update for responsiveness
         HandleAiming();
+        UpdateAnimations();
     }
 
     void FixedUpdate()
@@ -85,6 +90,52 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
     }
 
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            TakeDamage(1);
+        }
+    }
+
+    public void TakeDamage(int damageAmount)
+    {
+        if (Time.time >= lastDamageTime + invincibilityDuration)
+        {
+            lastDamageTime = Time.time;
+            currentHealth -= damageAmount;
+            Debug.Log("Player took " + damageAmount + " damage. Current health: " + currentHealth);
+            
+            animator?.SetTrigger("isDamaged");
+
+            if (currentHealth <= 0)
+            {
+                Die();
+            }
+        }
+    }
+
+    private void Die()
+    {
+        Debug.Log("Player Died!");
+    }
+
+    private void UpdateAnimations()
+    {
+        if (animator != null)
+        {
+            // Check if the moveDirection vector has any length. 
+            // sqrMagnitude is more efficient than magnitude.
+            if (moveDirection.sqrMagnitude > 0.01f)
+            {
+                animator.SetBool("isMoving", true);
+            }
+            else
+            {
+                animator.SetBool("isMoving", false);
+            }
+        }
+    }
     // This method will be called by the Input Controller
     public void SetMoveDirection(Vector2 newDirection)
     {
