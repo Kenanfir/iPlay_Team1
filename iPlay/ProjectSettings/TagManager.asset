@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - PlayerLight
   layers:
   - Default
   - TransparentFX
@@ -41,4 +42,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 126285579
+    locked: 0
+  - name: Player
+    uniqueID: 1950523685
+    locked: 0
+  - name: Companion
+    uniqueID: 2923172027
+    locked: 0
+  - name: Enemy
+    uniqueID: 772011061
     locked: 0
