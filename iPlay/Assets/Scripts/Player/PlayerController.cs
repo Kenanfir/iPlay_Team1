@@ -10,6 +10,10 @@ public class PlayerController : MonoBehaviour
     [Tooltip("The prefab for the flashlight/weapon object.")]
     public GameObject flashlightPrefab;
 
+    [Header("Player Stats")]
+    public int maxHealth = 6;
+    private int currentHealth;
+
     [Header("Movement")]
     [Tooltip("How fast the player moves.")]
     public float moveSpeed = 5f;
@@ -17,6 +21,8 @@ public class PlayerController : MonoBehaviour
     [Header("Aiming")]
     [Tooltip("How far the flashlight is from the player's center.")]
     public float aimDistance = 1.5f;
+    [Tooltip("How smoothly the flashlight rotates to the aim direction. Smaller is slower.")]
+    public float aimSpeed = 10f;
 
     // Private components
     private Rigidbody2D rb;
@@ -28,15 +34,14 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
-        // Ensure the player has a Rigidbody2D for physics
         rb = GetComponent<Rigidbody2D>();
         if (rb == null)
         {
             rb = gameObject.AddComponent<Rigidbody2D>();
         }
-        rb.gravityScale = 0; // Top-down games usually don't have gravity
-        rb.drag = 10f; // Add some drag to make movement feel tighter
-        rb.freezeRotation = true; // Prevent the player from spinning from collisions
+        rb.gravityScale = 0; 
+        rb.drag = 10f; 
+        rb.freezeRotation = true;
     }
 
     void Start()
@@ -54,15 +59,16 @@ public class PlayerController : MonoBehaviour
         // Create the flashlight from its prefab
         if (flashlightPrefab != null)
         {
-            // We still parent it to the player so it moves with the player
+            
             flashlightInstance = Instantiate(flashlightPrefab, transform.position, Quaternion.identity, transform);
-            aimTransform = flashlightInstance.transform; // Get the transform for aiming
+            aimTransform = flashlightInstance.transform; // transform for aiming
         }
         else
         {
             Debug.LogError("Flashlight Prefab is not assigned in the PlayerController!");
         }
 
+        // Initialize flashlight aim directions
         aimDirection = Vector2.right;
         HandleAiming();
     }
@@ -99,16 +105,25 @@ public class PlayerController : MonoBehaviour
 
     private void HandleAiming()
     {
-        if (aimTransform != null && aimDirection != Vector2.zero)
+        if (aimTransform != null)
         {
-            // Calculate the angle from the aim input vector
-            float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
+            // Define the target direction from the input
+            Vector2 targetDirection = aimDirection;
 
+            // Get the flashlight's current forward direction (we use .right because the sprite points right)
+            Vector2 currentDirection = aimTransform.right;
 
+            // Smoothly interpolate between the current and target directions using Slerp
+            Vector2 smoothedDirection = Vector3.Slerp(currentDirection, targetDirection, aimSpeed * Time.deltaTime);
+
+            // Calculate the angle from the new smoothed direction
+            float angle = Mathf.Atan2(smoothedDirection.y, smoothedDirection.x) * Mathf.Rad2Deg;
+            
+            // Apply the new rotation
             aimTransform.rotation = Quaternion.Euler(0, 0, angle);
 
-            Vector2 offset = aimDirection.normalized * aimDistance;
-
+            // Position the flashlight using the smoothed direction to avoid jitter
+            Vector2 offset = smoothedDirection.normalized * aimDistance;
             aimTransform.position = (Vector2)transform.position + offset;
         }
     }

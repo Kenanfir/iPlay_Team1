@@ -13,7 +13,7 @@ public class MobileInputController : MonoBehaviour
     [Tooltip("How far the player must drag their finger to reach maximum input speed.")]
     public float touchDragRadius = 100f;
 
-    // Private variables to store input data
+    // Input vectors
     private Vector2 moveInput;
     private Vector2 aimInput;
 

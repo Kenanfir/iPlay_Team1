@@ -239,7 +239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerSpritePrefab: {fileID: 6274540775640895810, guid: 43a068ef6760446089066e80039fae1a, type: 3}
-  flashlightPrefab: {fileID: 6164593295395249626, guid: c961f54885a464e8b85010432fa99ed5, type: 3}
+  flashlightPrefab: {fileID: 6164593295395249626, guid: fe7cfcbed10fc47f493881bdccf36221, type: 3}
   moveSpeed: 2
   aimDistance: 0.1
 --- !u!4 &1480956947
