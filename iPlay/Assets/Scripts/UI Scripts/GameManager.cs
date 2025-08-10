@@ -11,8 +11,8 @@ public class GameManager : MonoBehaviour
 
     public RectTransform bar;
     public Vector3[] positions;
-    public float barMoveDuration = 5f;
-    public float barPauseDuration = 5f;
+    public float barMoveDuration;
+    public float barPauseDuration;
 
     public Image[] hearts; // Assign in Inspector
     public Sprite fullHeart;
@@ -26,10 +26,13 @@ public class GameManager : MonoBehaviour
     float startTime;
     float endTime;
 
+    public AudioClip resumeSound;
+    private AudioSource audioSource;
 
     void Start()
     {
         startTime = Time.time;
+        audioSource = GetComponent<AudioSource>();
         StartDawnBar();
         StartHealthBar();
         StartScoreCounter();
@@ -48,6 +51,7 @@ public class GameManager : MonoBehaviour
 
     public void ResumeGame()
     {
+        audioSource.PlayOneShot(resumeSound);
         pausePanel.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;

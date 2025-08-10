@@ -47,15 +47,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5033eaa933c62462f8d53d33a196614b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSpritePrefab: {fileID: 6274540775640895810, guid: 43a068ef6760446089066e80039fae1a, type: 3}
-  flashlightPrefab: {fileID: 6164593295395249626, guid: fe7cfcbed10fc47f493881bdccf36221, type: 3}
   maxHealth: 6
   invincibilityDuration: 2
-  damagedSound: {fileID: 8300000, guid: 34d7a759c4852401f9159ab627ad3f23, type: 3}
+  damageSound: {fileID: 8300000, guid: 34d7a759c4852401f9159ab627ad3f23, type: 3}
+  cameraController: {fileID: 0}
+  playerSpritePrefab: {fileID: 6274540775640895810, guid: 43a068ef6760446089066e80039fae1a, type: 3}
+  flashlightPrefab: {fileID: 6164593295395249626, guid: fe7cfcbed10fc47f493881bdccf36221, type: 3}
   moveSpeed: 0.7
   aimDistance: 0.1
   aimSpeed: 10
-  cameraController: {fileID: 0}
+  flashlightOffset: {x: 0, y: -1}
 --- !u!50 &744971862583115886
 Rigidbody2D:
   serializedVersion: 4

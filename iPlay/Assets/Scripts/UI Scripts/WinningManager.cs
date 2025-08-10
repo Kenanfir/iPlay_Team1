@@ -13,10 +13,16 @@ public class WinningManager : MonoBehaviour
     public Text scoreText;
     public Text durationText;
 
+    public AudioClip soundEffect;
+    public AudioClip tapSoundEffect;
+    private AudioSource audioSource;
+
     int tapCount = 0;
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+        audioSource.PlayOneShot(soundEffect);
         scoreText.text = GameData.Instance.score.ToString();
         int minutes = Mathf.FloorToInt(GameData.Instance.gameplayDuration / 60f);
         int seconds = Mathf.FloorToInt(GameData.Instance.gameplayDuration % 60f);
@@ -29,12 +35,22 @@ public class WinningManager : MonoBehaviour
     {
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
+            if (tapCount == 0)
+            {
+                audioSource.PlayOneShot(soundEffect);
+            }
+            audioSource.PlayOneShot(tapSoundEffect);
             isNext();
             tapCount += 1;
         }
         //untuk testing
         if (Input.GetMouseButtonDown(0))
         {
+            if (tapCount == 0)
+            {
+                audioSource.PlayOneShot(soundEffect);
+            }
+            audioSource.PlayOneShot(tapSoundEffect);
             isNext();
             tapCount += 1;
         }
@@ -47,7 +63,7 @@ public class WinningManager : MonoBehaviour
 
         if (tapCount >= 1)
         {
-            SceneManager.LoadScene("Steven - Starting");
+            SceneManager.LoadScene("Steven - StartingScene");
         }
     }
 }

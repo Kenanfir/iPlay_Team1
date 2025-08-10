@@ -9,8 +9,14 @@ public class LosingManager : MonoBehaviour
     public Text scoreText;
     public Text durationText;
 
+    public AudioClip soundEffect;
+    public AudioClip tapSoundEffect;
+    private AudioSource audioSource;
+
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+        audioSource.PlayOneShot(soundEffect);
         scoreText.text = GameData.Instance.score.ToString();
         int minutes = Mathf.FloorToInt(GameData.Instance.gameplayDuration / 60f);
         int seconds = Mathf.FloorToInt(GameData.Instance.gameplayDuration % 60f);
@@ -23,28 +29,30 @@ public class LosingManager : MonoBehaviour
     {
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
+            audioSource.PlayOneShot(tapSoundEffect);
             Vector2 touchPosition = Input.GetTouch(0).position;
 
             if (touchPosition.x < Screen.width / 2f)
             {
-                SceneManager.LoadScene("Steven - Starting");
+                SceneManager.LoadScene("Steven - StartingScene");
             }
             else
             {
-                //scenemanager ke game
+                SceneManager.LoadScene("Game Scene");
             }
         }
         if (Input.GetMouseButtonDown(0))
         {
+            audioSource.PlayOneShot(tapSoundEffect);
             Vector2 mousePosition = Input.mousePosition;
 
             if (mousePosition.x < Screen.width / 2f)
             {
-                SceneManager.LoadScene("Steven - Starting");
+                SceneManager.LoadScene("Steven - StartingScene");
             }
             else
             {
-                //scenemanager ke game
+                SceneManager.LoadScene("Game Scene");
             }
         }
     }

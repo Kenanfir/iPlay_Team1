@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Steven - Losing.unity
     guid: 6da29fa062ab445c28fa35ef18c00ab3
+  - enabled: 1
+    path: Assets/Scenes/Steven - StartingScene.unity
+    guid: 5484c35ef463e46f68610e07162a35f9
   m_configObjects: {}
