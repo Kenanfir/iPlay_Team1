@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6892479794233294559}
   - component: {fileID: 5357299063106653767}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2814324319558297508}
   - component: {fileID: 2984060491863080819}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,7 +178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8370721928285485321}
   - component: {fileID: 7775262901967390525}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,7 +262,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4040264522085403254}
   - component: {fileID: 1176585202370413442}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -346,7 +346,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4398416245345862547}
   - component: {fileID: 2123399441002404406}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -430,7 +430,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8278865550879876039}
   - component: {fileID: 8450259232330356270}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (17)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -514,7 +514,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2986180422835885241}
   - component: {fileID: 319722016959706213}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -598,7 +598,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3085927048384586692}
   - component: {fileID: 99675317362490307}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -682,7 +682,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1697879329555531}
   - component: {fileID: 4731209741795229615}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -766,7 +766,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7573200622880820316}
   - component: {fileID: 7380447799763643049}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -850,7 +850,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4037196204121918284}
   - component: {fileID: 5043007534357762666}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (20)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -934,7 +934,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3832181651671113989}
   - component: {fileID: 6546735320807830437}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (14)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1018,7 +1018,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6149535686356490779}
   - component: {fileID: 2252962495169590692}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1102,7 +1102,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2098243936875372488}
   - component: {fileID: 644772792511425868}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1185,7 +1185,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6730406803707246073}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Rod
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1221,7 +1221,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7892256573396609645}
   - component: {fileID: 3362701283412677215}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (13)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1305,7 +1305,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5877570397508493166}
   - component: {fileID: 6785987924988404526}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (18)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1388,7 +1388,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2532902951126771423}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FlashLight 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1404,7 +1404,7 @@ Transform:
   m_GameObject: {fileID: 6164593295395249626}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.04, z: 0}
+  m_LocalPosition: {x: 0, y: -0.04, z: -9}
   m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1423,7 +1423,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4555191956365006993}
   - component: {fileID: 3624788732075480492}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1507,7 +1507,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1269613278834388678}
   - component: {fileID: 6942682724883293897}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1591,7 +1591,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8886006037485453412}
   - component: {fileID: 7017504432772667415}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (16)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1675,7 +1675,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1734929370980175525}
   - component: {fileID: 4627845005889151122}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (19)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1759,7 +1759,7 @@ GameObject:
   m_Component:
   - component: {fileID: 950800664124029177}
   - component: {fileID: 3349836752895468976}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1843,7 +1843,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8990660264023701087}
   - component: {fileID: 8368215746302852065}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1927,7 +1927,7 @@ GameObject:
   m_Component:
   - component: {fileID: 932397760813214190}
   - component: {fileID: 9024394404591746716}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (15)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2011,7 +2011,7 @@ GameObject:
   m_Component:
   - component: {fileID: 90290140991364051}
   - component: {fileID: 5900713314226075008}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2094,7 +2094,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 275851496937033778}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: LightCone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2147,7 +2147,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4681693612012388790}
   - component: {fileID: 8497142186336713333}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pixel (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2284,6 +2284,10 @@ PrefabInstance:
     - target: {fileID: 4297410571559370741, guid: 4f5b17546cf904efc9108d4bfdc41a99, type: 3}
       propertyPath: m_Name
       value: Light
+      objectReference: {fileID: 0}
+    - target: {fileID: 4297410571559370741, guid: 4f5b17546cf904efc9108d4bfdc41a99, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4297410571559370741, guid: 4f5b17546cf904efc9108d4bfdc41a99, type: 3}
       propertyPath: m_IsActive

@@ -51,6 +51,12 @@ public class CompanionController : MonoBehaviour
     private Color[] originalColors;
     private AudioSource audioSource;
     private bool isDead = false;
+    
+    public static readonly List<CompanionController> All = new List<CompanionController>();
+
+    void OnEnable()  { All.Add(this); }
+    void OnDisable() { All.Remove(this); }
+
 
     void Awake()
     {

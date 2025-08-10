@@ -5,6 +5,8 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class EnemyClass : MonoBehaviour
 {
+    [SerializeField] private CompanionController forcedCompanion; // drag in the scene Companion if you want
+
     [Header("Stats")]
     public int maxHP = 1;            // Lv1:1, Lv2:2, Lv3:3
     public float moveSpeed = 2f;     // Lv1:3? Lv2:2? Lv3:1? (set per prefab)
@@ -50,7 +52,9 @@ public class EnemyClass : MonoBehaviour
         float dist = dir.magnitude;
         dir.Normalize();
 
-        rb.velocity = dir * moveSpeed;
+        rb.velocity = dir * moveSpeed * 0.01f;
+
+        Debug.Log($"Target: {target?.name} | Dist: {dist} | Vel: {rb.velocity}");
 
         if (dist <= attackRange && Time.time >= lastAtk + attackInterval)
         {
@@ -71,23 +75,31 @@ public class EnemyClass : MonoBehaviour
         if (player != null) { player.TakeDamage(attackDamage); return; }
     }
 
-    void FindTarget()
-    {
-        // Companion first
-        CompanionController[] comps = FindObjectsOfType<CompanionController>();
-        Transform closest = null; float best = float.PositiveInfinity;
-        foreach (var c in comps)
-        {
-            if (c == null) continue;
-            float d = Vector2.Distance(transform.position, c.transform.position);
-            if (d < best) { best = d; closest = c.transform; }
-        }
-        if (closest != null) { target = closest; return; }
+   void FindTarget()
+{
+    target = null;
+    float best = Mathf.Infinity;
 
-        // Player fallback
+    // 1) Prefer the registry (most reliable)
+    foreach (var c in CompanionController.All)
+    {
+        if (c == null || !c.isActiveAndEnabled) continue;
+        float d = Vector2.Distance(transform.position, c.transform.position);
+        if (d < best) { best = d; target = c.transform; }
+    }
+
+    // 2) Optional explicit fallback via Inspector
+    if (target == null && forcedCompanion != null && forcedCompanion.isActiveAndEnabled)
+        target = forcedCompanion.transform;
+
+    // 3) Fallback to Player
+    if (target == null)
+    {
         var player = FindObjectOfType<PlayerController>();
         if (player != null) target = player.transform;
     }
+}
+
 
     public void TakeDamage(int amount)
     {

@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour
 
         if (flashlightPrefab != null)
         {
-            flashlightInstance = Instantiate(flashlightPrefab, transform.position, Quaternion.identity, transform);
+            flashlightInstance = Instantiate(flashlightPrefab);
             aimTransform = flashlightInstance.transform;
         }
         else
