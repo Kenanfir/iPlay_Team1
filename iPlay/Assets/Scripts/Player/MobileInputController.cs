@@ -20,13 +20,16 @@ public class MobileInputController : MonoBehaviour
     [Tooltip("The handle image of the aiming joystick.")]
     public RectTransform aimJoystickHandle;
 
-    // Private variables to store input data
+    [Header("Input Settings")]
+    [Tooltip("The vertical portion of the screen (from the bottom, 0 to 1) that will be used for joystick input.")]
+    [Range(0.1f, 1.0f)]
+    public float touchAreaHeight = 0.5f; // Default to the bottom 50% of the screen
+
+    // Private variables
     private Vector2 moveInput;
     private Vector2 aimInput;
-
     private int leftTouchId = -1;
     private int rightTouchId = -1;
-
     private Vector2 moveJoystickInitialPos;
     private Vector2 aimJoystickInitialPos;
 
@@ -37,49 +40,47 @@ public class MobileInputController : MonoBehaviour
             playerController = GetComponent<PlayerController>();
             if (playerController == null)
             {
-                Debug.LogError("Player Controller could not be found! This script needs a PlayerController to function.");
+                Debug.LogError("Player Controller could not be found!");
                 enabled = false;
                 return;
             }
         }
 
-        // Store the initial positions of the joystick handles for resetting
         moveJoystickInitialPos = moveJoystickHandle.anchoredPosition;
         aimJoystickInitialPos = aimJoystickHandle.anchoredPosition;
 
-        // --- NEW: Hide the joysticks at the start ---
         moveJoystickBG.gameObject.SetActive(false);
         aimJoystickBG.gameObject.SetActive(false);
     }
 
     void Update()
     {
-        // Reset inputs for this frame
         moveInput = Vector2.zero;
         aimInput = Vector2.zero;
 
-        // Process all current touches
         for (int i = 0; i < Input.touchCount; i++)
         {
             Touch touch = Input.GetTouch(i);
 
+            // --- NEW: Check if the touch is within the allowed vertical area ---
+            if (touch.position.y > Screen.height * touchAreaHeight)
+            {
+                continue; // Ignore touches in the top part of the screen
+            }
+
             // --- LEFT SIDE (MOVEMENT) ---
             if (touch.position.x < Screen.width / 2)
             {
-                // If this is a new touch on the left side
                 if (leftTouchId == -1 && touch.phase == TouchPhase.Began)
                 {
                     leftTouchId = touch.fingerId;
-                    // Show the joystick and move it to the touch position
                     moveJoystickBG.gameObject.SetActive(true);
                     moveJoystickBG.position = touch.position;
                 }
-                // If this is a continuing touch from our tracked finger
                 else if (touch.fingerId == leftTouchId)
                 {
                     HandleJoystick(touch, moveJoystickBG, moveJoystickHandle, ref moveInput);
 
-                    // If the finger is lifted, hide the joystick
                     if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
                     {
                         leftTouchId = -1;
@@ -91,20 +92,16 @@ public class MobileInputController : MonoBehaviour
             // --- RIGHT SIDE (AIMING) ---
             else
             {
-                // If this is a new touch on the right side
                 if (rightTouchId == -1 && touch.phase == TouchPhase.Began)
                 {
                     rightTouchId = touch.fingerId;
-                    // Show the joystick and move it to the touch position
                     aimJoystickBG.gameObject.SetActive(true);
                     aimJoystickBG.position = touch.position;
                 }
-                // If this is a continuing touch from our tracked finger
                 else if (touch.fingerId == rightTouchId)
                 {
                     HandleJoystick(touch, aimJoystickBG, aimJoystickHandle, ref aimInput);
 
-                    // If the finger is lifted, hide the joystick
                     if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
                     {
                         rightTouchId = -1;
@@ -115,7 +112,6 @@ public class MobileInputController : MonoBehaviour
             }
         }
 
-        // Send the final input values to the PlayerController
         playerController.SetMoveDirection(moveInput);
         playerController.SetAimDirection(aimInput);
     }
