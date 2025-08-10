@@ -63,6 +63,7 @@ public class WinningManager : MonoBehaviour
 
         if (tapCount >= 1)
         {
+            AudioManager.Instance.StopAudio();
             SceneManager.LoadScene("Steven - StartingScene");
         }
     }
