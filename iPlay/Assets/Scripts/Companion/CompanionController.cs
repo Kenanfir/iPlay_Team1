@@ -21,7 +21,7 @@ public class CompanionController : MonoBehaviour
 
     [Header("UI")]
     [Tooltip("The UI Slider for the companion's health bar.")]
-    public Slider healthBar;
+    public Slider healthBar; // Logic is now correctly here
 
     [Header("Attack Timings")]
     public float attackInterval = 0.2f;
@@ -75,6 +75,7 @@ public class CompanionController : MonoBehaviour
 
         lineRenderer.positionCount = 0;
 
+        // Initialize the health bar
         if (healthBar != null)
         {
             healthBar.maxValue = maxHealth;
@@ -115,6 +116,7 @@ public class CompanionController : MonoBehaviour
         lastDamageTime = Time.time;
         currentHealth -= damageAmount;
 
+        // Update the health bar value
         if (healthBar != null)
         {
             healthBar.value = currentHealth;
@@ -164,7 +166,7 @@ public class CompanionController : MonoBehaviour
         if (targetEnemy == null)
         {
             currentState = CompanionState.Idle;
-            isLockedOnToTarget = false; // Unlock since the target is gone
+            isLockedOnToTarget = false;
             return;
         }
 
@@ -179,7 +181,7 @@ public class CompanionController : MonoBehaviour
 
         if (Vector2.Distance(transform.position, targetEnemy.position) <= attackRange)
         {
-            slashesLeft = 2; // --- NEW: Reset attack combo before attacking ---
+            slashesLeft = 2;
             currentState = CompanionState.Attacking;
             rb.velocity = Vector2.zero;
         }
@@ -188,7 +190,7 @@ public class CompanionController : MonoBehaviour
     private void HandleAttackingState()
     {
         lineRenderer.positionCount = 0;
-        if (targetEnemy == null) // Check if enemy died mid-combo
+        if (targetEnemy == null)
         {
             currentState = CompanionState.Idle;
             isLockedOnToTarget = false;
@@ -225,10 +227,8 @@ public class CompanionController : MonoBehaviour
         }
     }
 
-    // --- UPDATED: This state now re-engages the enemy ---
     private void HandleCooldownState()
     {
-        // If the enemy dies during our cooldown, go back to idle.
         if (targetEnemy == null)
         {
             isLockedOnToTarget = false;
@@ -236,7 +236,6 @@ public class CompanionController : MonoBehaviour
             return;
         }
 
-        // After the cooldown, immediately go back to chasing the same target.
         if (Time.time > lastActionTime + attackCooldown)
         {
             currentState = CompanionState.Chasing;
