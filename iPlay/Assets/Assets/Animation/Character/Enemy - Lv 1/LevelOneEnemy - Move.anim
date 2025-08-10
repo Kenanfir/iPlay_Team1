@@ -134,7 +134,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Square (3)
+    path: Whole Body/Square (3)
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -168,7 +168,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Square (2)
+    path: Whole Body/Square (2)
   m_ScaleCurves: []
   m_FloatCurves: []
   m_PPtrCurves: []
@@ -189,7 +189,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 2827832259
+      path: 4153599244
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -198,7 +198,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 2979428994
+      path: 4002010189
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -560,7 +560,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: Square (3)
+    path: Whole Body/Square (3)
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -599,7 +599,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: Square (3)
+    path: Whole Body/Square (3)
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -638,7 +638,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: Square (3)
+    path: Whole Body/Square (3)
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -677,7 +677,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: Square (2)
+    path: Whole Body/Square (2)
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -716,7 +716,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: Square (2)
+    path: Whole Body/Square (2)
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -755,7 +755,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: Square (2)
+    path: Whole Body/Square (2)
     classID: 4
     script: {fileID: 0}
     flags: 0
