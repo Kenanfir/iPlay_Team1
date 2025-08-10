@@ -110,12 +110,10 @@ public class PlayerController : MonoBehaviour
         {
             lastDamageTime = Time.time;
             currentHealth -= damageAmount;
-
-            if (damageSound != null && audioSource != null)
             FindObjectOfType<GameManager>()?.TakeDamage();
             Debug.Log("Player took " + damageAmount + " damage. Current health: " + currentHealth);
             
-            if (damagedSound != null && audioSource != null)
+            if (damageSound != null && audioSource != null)
             {
                 audioSource.PlayOneShot(damageSound);
             }
