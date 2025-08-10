@@ -459,7 +459,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 0.7
+  orthographic size: 0.4
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -831,6 +831,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7721213861029886937, guid: c41747f62239d4c02b1e54bcd5c59806, type: 3}
+      propertyPath: aimDistance
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 7721213861029886937, guid: c41747f62239d4c02b1e54bcd5c59806, type: 3}
+      propertyPath: flashlightOffset.y
+      value: -0.02
+      objectReference: {fileID: 0}
     - target: {fileID: 8464421697556260370, guid: c41747f62239d4c02b1e54bcd5c59806, type: 3}
       propertyPath: m_Name
       value: Player
@@ -1063,9 +1071,9 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 435700196}
   - {fileID: 1434065894}
   - {fileID: 515336947}
+  - {fileID: 435700196}
   - {fileID: 205604288}
   - {fileID: 1717888005}
   - {fileID: 1821087978}
