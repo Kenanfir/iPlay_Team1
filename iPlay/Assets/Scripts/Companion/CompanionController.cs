@@ -1,26 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-[RequireComponent(typeof(LineRenderer))]
+[RequireComponent(typeof(LineRenderer))] // Ensures a Line Renderer is always present
+[RequireComponent(typeof(AudioSource))] // Ensures an Audio Source is always present
 public class CompanionController : MonoBehaviour
 {
-    public enum CompanionState { Idle, Chasing, Attacking, Cooldown }
+    public enum CompanionState { Idle, Chasing, Attacking, Cooldown, Dead }
 
     [Header("Companion Stats")]
     public int maxHealth = 6;
     public float moveSpeed = 2f;
     public float attackRange = 0.5f;
+    public int attackDamage = 1;
+    [Tooltip("How long the companion is invincible after being hit.")]
+    public float invincibilityDuration = 1.5f;
     private int currentHealth;
+    private float lastDamageTime;
+
+    [Header("UI")]
+    [Tooltip("The UI Slider for the companion's health bar.")]
+    public Slider healthBar;
 
     [Header("Attack Timings")]
     public float attackInterval = 0.2f;
     public float attackCooldown = 0.5f;
 
+    [Header("SFX")]
+    public AudioClip deathSound;
+    public AudioClip attackSound;
+    public AudioClip hurtSound;
+
     // State Machine
     private CompanionState currentState;
     private bool isLitByPlayer;
     private Transform targetEnemy;
+    private bool isLockedOnToTarget = false;
 
     // Attacking
     private int slashesLeft;
@@ -29,17 +45,20 @@ public class CompanionController : MonoBehaviour
     // Components & References
     private Rigidbody2D rb;
     private Animator animator;
-    private SpriteRenderer spriteRenderer;
-    private Color originalColor;
     private LightDetector lightCone;
-    private LineRenderer lineRenderer; // Check path to enemy
+    private LineRenderer lineRenderer;
+    private SpriteRenderer[] spriteRenderers;
+    private Color[] originalColors;
+    private AudioSource audioSource;
+    private bool isDead = false;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>();
-        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         lineRenderer = GetComponent<LineRenderer>();
+        spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Start()
@@ -47,15 +66,26 @@ public class CompanionController : MonoBehaviour
         currentHealth = maxHealth;
         currentState = CompanionState.Idle;
         slashesLeft = 2;
-        if (spriteRenderer != null)
+        
+        originalColors = new Color[spriteRenderers.Length];
+        for (int i = 0; i < spriteRenderers.Length; i++)
         {
-            originalColor = spriteRenderer.color;
+            originalColors[i] = spriteRenderers[i].color;
         }
+
         lineRenderer.positionCount = 0;
+
+        if (healthBar != null)
+        {
+            healthBar.maxValue = maxHealth;
+            healthBar.value = currentHealth;
+        }
     }
 
     void Update()
     {
+        if (isDead) return;
+
         switch (currentState)
         {
             case CompanionState.Idle: HandleIdleState(); break;
@@ -64,14 +94,56 @@ public class CompanionController : MonoBehaviour
             case CompanionState.Cooldown: HandleCooldownState(); break;
         }
     }
+    
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (isDead) return;
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            TakeDamage(1);
+        }
+    }
+
+    public void TakeDamage(int damageAmount)
+    {
+        if (isDead) return;
+        if (Time.time < lastDamageTime + invincibilityDuration)
+        {
+            return;
+        }
+
+        lastDamageTime = Time.time;
+        currentHealth -= damageAmount;
+
+        if (healthBar != null)
+        {
+            healthBar.value = currentHealth;
+        }
+        
+        if (!isLitByPlayer)
+        {
+            if(animator != null) animator.SetTrigger("isDamaged");
+            if (hurtSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(hurtSound);
+            }
+        }
+        
+        StartCoroutine(HurtFlashCoroutine());
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
 
     private void HandleIdleState()
     {
         rb.velocity = Vector2.zero;
         if(animator != null) animator.SetBool("isChasing", false);
-        lineRenderer.positionCount = 0; 
+        lineRenderer.positionCount = 0;
 
-        if (isLitByPlayer)
+        if (isLitByPlayer && !isLockedOnToTarget)
         {
             if (lightCone == null)
             {
@@ -81,6 +153,7 @@ public class CompanionController : MonoBehaviour
             FindClosestEnemyInLight();
             if (targetEnemy != null)
             {
+                isLockedOnToTarget = true;
                 currentState = CompanionState.Chasing;
             }
         }
@@ -88,10 +161,10 @@ public class CompanionController : MonoBehaviour
 
     private void HandleChasingState()
     {
-        if (targetEnemy == null || lightCone == null || !lightCone.enemiesInLight.Contains(targetEnemy))
+        if (targetEnemy == null)
         {
             currentState = CompanionState.Idle;
-            targetEnemy = null;
+            isLockedOnToTarget = false; // Unlock since the target is gone
             return;
         }
 
@@ -100,13 +173,13 @@ public class CompanionController : MonoBehaviour
         Vector2 direction = (targetEnemy.position - transform.position).normalized;
         rb.velocity = direction * moveSpeed;
 
-        // --- NEW: Draw the path line ---
         lineRenderer.positionCount = 2;
         lineRenderer.SetPosition(0, transform.position);
         lineRenderer.SetPosition(1, targetEnemy.position);
 
         if (Vector2.Distance(transform.position, targetEnemy.position) <= attackRange)
         {
+            slashesLeft = 2; // --- NEW: Reset attack combo before attacking ---
             currentState = CompanionState.Attacking;
             rb.velocity = Vector2.zero;
         }
@@ -115,7 +188,14 @@ public class CompanionController : MonoBehaviour
     private void HandleAttackingState()
     {
         lineRenderer.positionCount = 0;
-        if (targetEnemy == null || Vector2.Distance(transform.position, targetEnemy.position) > attackRange)
+        if (targetEnemy == null) // Check if enemy died mid-combo
+        {
+            currentState = CompanionState.Idle;
+            isLockedOnToTarget = false;
+            return;
+        }
+        
+        if (Vector2.Distance(transform.position, targetEnemy.position) > attackRange)
         {
             currentState = CompanionState.Chasing;
             return;
@@ -127,6 +207,17 @@ public class CompanionController : MonoBehaviour
             slashesLeft--;
             if(animator != null) animator.SetTrigger("isAttacking");
 
+            if (attackSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(attackSound);
+            }
+
+            EnemyController enemy = targetEnemy.GetComponent<EnemyController>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(attackDamage);
+            }
+
             if (slashesLeft <= 0)
             {
                 currentState = CompanionState.Cooldown;
@@ -134,20 +225,89 @@ public class CompanionController : MonoBehaviour
         }
     }
 
+    // --- UPDATED: This state now re-engages the enemy ---
     private void HandleCooldownState()
     {
+        // If the enemy dies during our cooldown, go back to idle.
+        if (targetEnemy == null)
+        {
+            isLockedOnToTarget = false;
+            currentState = CompanionState.Idle;
+            return;
+        }
+
+        // After the cooldown, immediately go back to chasing the same target.
         if (Time.time > lastActionTime + attackCooldown)
         {
-            slashesLeft = 2;
-            currentState = CompanionState.Idle;
+            currentState = CompanionState.Chasing;
         }
     }
 
-    // --- HELPER & DETECTION METHODS ---
-    // (The rest of the script remains the same)
+    private void Die()
+    {
+        isDead = true;
+        currentState = CompanionState.Dead;
+        Debug.Log("Companion has died.");
+
+        if (deathSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(deathSound);
+        }
+
+        rb.velocity = Vector2.zero;
+        GetComponent<Collider2D>().enabled = false;
+        lineRenderer.positionCount = 0;
+
+        if (healthBar != null)
+        {
+            healthBar.gameObject.SetActive(false);
+        }
+
+        if(animator != null) animator.SetTrigger("isDead");
+
+        StartCoroutine(DeathSequenceCoroutine());
+    }
+
+    private IEnumerator HurtFlashCoroutine()
+    {
+        for (int i = 0; i < spriteRenderers.Length; i++)
+        {
+            spriteRenderers[i].color = Color.red;
+        }
+        yield return new WaitForSeconds(1f);
+        if (!isDead)
+        {
+            for (int i = 0; i < spriteRenderers.Length; i++)
+            {
+                spriteRenderers[i].color = originalColors[i];
+            }
+        }
+    }
+    
+    private IEnumerator DeathSequenceCoroutine()
+    {
+        yield return new WaitForSeconds(1f);
+
+        float fadeDuration = 1f;
+        float elapsed = 0f;
+
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            float alpha = Mathf.Lerp(1f, 0f, elapsed / fadeDuration);
+            for (int i = 0; i < spriteRenderers.Length; i++)
+            {
+                spriteRenderers[i].color = new Color(spriteRenderers[i].color.r, spriteRenderers[i].color.g, spriteRenderers[i].color.b, alpha);
+            }
+            yield return null;
+        }
+
+        Destroy(gameObject);
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (isDead) return;
         if (other.CompareTag("PlayerLight"))
         {
             isLitByPlayer = true;
@@ -156,6 +316,7 @@ public class CompanionController : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D other)
     {
+        if (isDead) return;
         if (other.CompareTag("PlayerLight"))
         {
             isLitByPlayer = false;
@@ -183,36 +344,8 @@ public class CompanionController : MonoBehaviour
             }
         }
     }
-
-    public void TakeDamage(int damageAmount)
-    {
-        currentHealth -= damageAmount;
-        Debug.Log("Companion took damage! Health is now " + currentHealth);
-
-        if (animator != null)
-        {
-            animator.SetTrigger("isDamaged");
-        }
-
-        StartCoroutine(HurtFlashCoroutine());
-
-        if (currentHealth <= 0)
-        {
-            // Death Logic
-            
-        }
-    }
-
-    private IEnumerator HurtFlashCoroutine()
-    {
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = Color.red;
-            yield return new WaitForSeconds(1f);
-            spriteRenderer.color = originalColor;
-        }
-    }
 }
+
 
     
 
