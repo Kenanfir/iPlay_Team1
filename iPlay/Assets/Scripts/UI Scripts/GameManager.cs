@@ -158,5 +158,17 @@ public class GameManager : MonoBehaviour
         GameData.Instance.gameplayDuration = endTime - startTime;
     }
     #endregion
+
+    public void WinGame()
+    {
+    DurationCounter();
+    UnityEngine.SceneManagement.SceneManager.LoadScene("Steven - Winning");
+    }
+
+public void LoseGame()
+    {
+    DurationCounter();
+    UnityEngine.SceneManagement.SceneManager.LoadScene("Steven - Losing");
+    }  
     
 }
