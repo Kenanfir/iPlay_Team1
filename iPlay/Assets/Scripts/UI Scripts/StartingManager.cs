@@ -13,9 +13,15 @@ public class StartingManager : MonoBehaviour
     private int currentIndex = 0;
     private bool autoChangeActive = true;
 
+    AudioSource audioSource;
+
+    public AudioClip startingSound;
+
     void Start()
     {
         ShowCurrentScreen();
+        audioSource = GetComponent<AudioSource>();
+        audioSource.PlayOneShot(startingSound);
         MainMenuScreen.SetActive(false);
         StartCoroutine(AutoChangeScreens());
     }
@@ -58,7 +64,7 @@ public class StartingManager : MonoBehaviour
 
         if (currentIndex == 7)
         {
-            SceneManager.LoadScene("Game Scene");
+            SceneManager.LoadScene("Steven - Winning");
             return;
         }
 

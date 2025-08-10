@@ -30,6 +30,7 @@ public class LosingManager : MonoBehaviour
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
             audioSource.PlayOneShot(tapSoundEffect);
+            AudioManager.Instance.StopAudio();
             Vector2 touchPosition = Input.GetTouch(0).position;
 
             if (touchPosition.x < Screen.width / 2f)
@@ -44,6 +45,7 @@ public class LosingManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             audioSource.PlayOneShot(tapSoundEffect);
+            AudioManager.Instance.StopAudio();
             Vector2 mousePosition = Input.mousePosition;
 
             if (mousePosition.x < Screen.width / 2f)

@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public GameObject pausePanel;
+    public GameObject overlayToWinOrLose;
     private bool isPaused = false;
 
     public RectTransform bar;
@@ -26,6 +27,11 @@ public class GameManager : MonoBehaviour
     float startTime;
     float endTime;
 
+    public Image fadeImage; 
+    public float fadeDuration;
+    public Image winTextWhenFade;
+    public Image loseTextWhenFade;
+
     public AudioClip resumeSound;
     private AudioSource audioSource;
 
@@ -33,6 +39,7 @@ public class GameManager : MonoBehaviour
     {
         startTime = Time.time;
         audioSource = GetComponent<AudioSource>();
+        AudioManager.Instance.StartAudioBackground();
         StartDawnBar();
         StartHealthBar();
         StartScoreCounter();
@@ -44,6 +51,7 @@ public class GameManager : MonoBehaviour
 
     public void PauseGame()
     {
+        Debug.Log("kepencet kok");
         pausePanel.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;
@@ -56,6 +64,26 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         isPaused = false;
     }
+
+    private IEnumerator FadeAndLoadScene(string sceneName, bool isWin)
+    {
+        overlayToWinOrLose.SetActive(true);
+        Color c = isWin ? Color.white : Color.black;
+        c.a = 0f;
+        fadeImage.color = c;
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < fadeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            c.a = Mathf.Clamp01(elapsedTime / fadeDuration);
+            fadeImage.color = c;
+            yield return null;
+        }
+        SceneManager.LoadScene(sceneName);
+    }
+
 
     #region Dawn bar
 
@@ -81,10 +109,15 @@ public class GameManager : MonoBehaviour
             }
 
             // Pause
-            yield return new WaitForSeconds(barPauseDuration);
+            if (i < positions.Length - 2)
+            {
+                yield return new WaitForSeconds(barPauseDuration);
+            }
         }
         DurationCounter();
-        SceneManager.LoadScene("Steven - Winning");
+        AudioManager.Instance.PlayWinSound();
+        winTextWhenFade.gameObject.SetActive(true);
+        StartCoroutine(FadeAndLoadScene("Steven - Winning", true));
     }
     #endregion
 
@@ -107,7 +140,9 @@ public class GameManager : MonoBehaviour
             if (health == 0)
             {
                 DurationCounter();
-                SceneManager.LoadScene("Steven - Losing");
+                AudioManager.Instance.PlayLoseSound();
+                loseTextWhenFade.gameObject.SetActive(true);
+                StartCoroutine(FadeAndLoadScene("Steven - Losing", false));
             }
         }
     }
