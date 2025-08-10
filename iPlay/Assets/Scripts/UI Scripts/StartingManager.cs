@@ -64,7 +64,7 @@ public class StartingManager : MonoBehaviour
 
         if (currentIndex == 7)
         {
-            SceneManager.LoadScene("Steven - Winning");
+            SceneManager.LoadScene("Game Scene");
             return;
         }
 
