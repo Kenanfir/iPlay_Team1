@@ -80,17 +80,17 @@ public class EnemyClass : MonoBehaviour
     target = null;
     float best = Mathf.Infinity;
 
-    // 1) Prefer the registry (most reliable)
-    foreach (var c in CompanionController.All)
-    {
-        if (c == null || !c.isActiveAndEnabled) continue;
-        float d = Vector2.Distance(transform.position, c.transform.position);
-        if (d < best) { best = d; target = c.transform; }
-    }
+    // // 1) Prefer the registry (most reliable)
+    // foreach (var c in CompanionController.All)
+    // {
+    //     if (c == null || !c.isActiveAndEnabled) continue;
+    //     float d = Vector2.Distance(transform.position, c.transform.position);
+    //     if (d < best) { best = d; target = c.transform; }
+    // }
 
-    // 2) Optional explicit fallback via Inspector
-    if (target == null && forcedCompanion != null && forcedCompanion.isActiveAndEnabled)
-        target = forcedCompanion.transform;
+    // // 2) Optional explicit fallback via Inspector
+    // if (target == null && forcedCompanion != null && forcedCompanion.isActiveAndEnabled)
+    //     target = forcedCompanion.transform;
 
     // 3) Fallback to Player
     if (target == null)

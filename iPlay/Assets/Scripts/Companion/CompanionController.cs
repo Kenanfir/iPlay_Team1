@@ -220,7 +220,7 @@ public class CompanionController : MonoBehaviour
                 audioSource.PlayOneShot(attackSound);
             }
 
-            EnemyController enemy = targetEnemy.GetComponent<EnemyController>();
+            EnemyClass enemy = targetEnemy.GetComponent<EnemyClass>();
             if (enemy != null)
             {
                 enemy.TakeDamage(attackDamage);

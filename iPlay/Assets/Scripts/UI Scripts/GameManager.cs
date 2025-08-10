@@ -10,48 +10,50 @@ public class GameManager : MonoBehaviour
     public GameObject overlayToWinOrLose;
     private bool isPaused = false;
 
+    [Header("Dawn/Wave Bar")]
     public RectTransform bar;
-    public Vector3[] positions;
-    public float barMoveDuration;
-    public float barPauseDuration;
+    public Vector3[] positions; // start & intermediate positions
+    public float barMoveDuration = 0.5f; // smooth move between wave segments
 
-    public Image[] hearts; // Assign in Inspector
+    [Header("Health UI")]
+    public Image[] hearts; 
     public Sprite fullHeart;
     public Sprite halfHeart;
     public Sprite emptyHeart;
     private int health;
 
+    [Header("Score UI")]
     public Text scoreText;
     private int score = 0;
 
-    float startTime;
-    float endTime;
-
+    [Header("Fade/Win/Lose")]
     public Image fadeImage; 
     public float fadeDuration;
     public Image winTextWhenFade;
     public Image loseTextWhenFade;
 
+    [Header("Audio")]
     public AudioClip resumeSound;
     private AudioSource audioSource;
+
+    float startTime;
+    float endTime;
 
     void Start()
     {
         startTime = Time.time;
         audioSource = GetComponent<AudioSource>();
         AudioManager.Instance.StartAudioBackground();
-        StartDawnBar();
+
         StartHealthBar();
         StartScoreCounter();
-    }
-    void Update()
-    {
 
+        // Initialize bar at start position
+        if (positions.Length > 0) bar.anchoredPosition = positions[0];
     }
 
     public void PauseGame()
     {
-        Debug.Log("kepencet kok");
         pausePanel.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;
@@ -84,46 +86,34 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
-
-    #region Dawn bar
-
-    void StartDawnBar()
+    // ---------------- Dawn Bar Progress (Synced with Waves) ----------------
+    public void SetBarProgress(float normalizedProgress)
     {
         if (positions.Length < 2) return;
-        bar.anchoredPosition = positions[0];
-        StartCoroutine(MoveBar());
+
+        float totalPos = normalizedProgress * (positions.Length - 1);
+        int index = Mathf.Clamp(Mathf.FloorToInt(totalPos), 0, positions.Length - 2);
+        float t = totalPos - index;
+
+        StopCoroutine(nameof(MoveBarSegment));
+        StartCoroutine(MoveBarSegment(index, t));
     }
 
-    IEnumerator MoveBar()
+    private IEnumerator MoveBarSegment(int index, float targetT)
     {
-        for (int i = 0; i < positions.Length - 1; i++)
+        Vector3 startPos = bar.anchoredPosition;
+        Vector3 endPos = Vector3.Lerp(positions[index], positions[index + 1], targetT);
+        float elapsed = 0f;
+
+        while (elapsed < barMoveDuration)
         {
-            // Move
-            float elapsed = 0f;
-            while (elapsed < barMoveDuration)
-            {
-                elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01(elapsed / barMoveDuration);
-                bar.anchoredPosition = Vector3.Lerp(positions[i], positions[i + 1], t);
-                yield return null;
-            }
-
-            // Pause
-            if (i < positions.Length - 2)
-            {
-                yield return new WaitForSeconds(barPauseDuration);
-            }
+            elapsed += Time.deltaTime;
+            bar.anchoredPosition = Vector3.Lerp(startPos, endPos, elapsed / barMoveDuration);
+            yield return null;
         }
-        DurationCounter();
-        AudioManager.Instance.PlayWinSound();
-        winTextWhenFade.gameObject.SetActive(true);
-        StartCoroutine(FadeAndLoadScene("Steven - Winning", true));
     }
-    #endregion
 
-    #region Health Bar
-
-
+    // ---------------- Health Bar ----------------
     void StartHealthBar()
     {
         health = hearts.Length * 2;
@@ -161,10 +151,8 @@ public class GameManager : MonoBehaviour
                 hearts[i].sprite = emptyHeart;
         }
     }
-    #endregion
 
-    #region Score Counter
-
+    // ---------------- Score Counter ----------------
     void StartScoreCounter()
     {
         UpdateScoreText();
@@ -173,41 +161,38 @@ public class GameManager : MonoBehaviour
     public void AddScore()
     {
         score += 50;
-
         if (GameData.Instance != null)
-        {
             GameData.Instance.score = score;
-        }
-
         UpdateScoreText();
     }
 
     void UpdateScoreText()
     {
         scoreText.text = score.ToString();
-
     }
 
-    #endregion
-
-    #region Duration Counter
+    // ---------------- Duration Counter ----------------
     void DurationCounter()
     {
         endTime = Time.time;
-        GameData.Instance.gameplayDuration = endTime - startTime;
+        if (GameData.Instance != null)
+            GameData.Instance.gameplayDuration = endTime - startTime;
     }
-    #endregion
 
+    // ---------------- Win/Lose ----------------
     public void WinGame()
     {
-    DurationCounter();
-    UnityEngine.SceneManagement.SceneManager.LoadScene("Steven - Winning");
+        DurationCounter();
+        AudioManager.Instance.PlayWinSound();
+        winTextWhenFade.gameObject.SetActive(true);
+        StartCoroutine(FadeAndLoadScene("Steven - Winning", true));
     }
 
-public void LoseGame()
+    public void LoseGame()
     {
-    DurationCounter();
-    UnityEngine.SceneManagement.SceneManager.LoadScene("Steven - Losing");
-    }  
-    
+        DurationCounter();
+        AudioManager.Instance.PlayLoseSound();
+        loseTextWhenFade.gameObject.SetActive(true);
+        StartCoroutine(FadeAndLoadScene("Steven - Losing", false));
+    }
 }

@@ -14,7 +14,7 @@ public class WaveEntry
 public class Wave
 {
     public List<WaveEntry> entries = new List<WaveEntry>();
-    public float spawnInterval = 0.4f; // time between spawns in a wave
+    public float spawnInterval = 0.4f;
 }
 
 public class WaveController : MonoBehaviour
@@ -26,7 +26,7 @@ public class WaveController : MonoBehaviour
     public bool autoStart = true;
 
     [Header("References")]
-    public GameManager gameManager; // optional; if null we load scene directly
+    public GameManager gameManager;
 
     int currentWave = -1;
     int aliveInWave = 0;
@@ -41,6 +41,8 @@ public class WaveController : MonoBehaviour
     public void StartNextWave()
     {
         currentWave++;
+        UpdateBar();
+
         if (currentWave >= waves.Count)
         {
             TryWin();
@@ -59,7 +61,6 @@ public class WaveController : MonoBehaviour
             {
                 var sp = spawnPoints[Random.Range(0, spawnPoints.Length)];
                 var enemy = Instantiate(entry.enemyPrefab, sp.position, Quaternion.identity);
-
                 aliveInWave++;
                 enemy.OnEnemyDied += OnEnemyDied;
 
@@ -87,12 +88,25 @@ public class WaveController : MonoBehaviour
             TryWin();
     }
 
+    void UpdateBar()
+    {
+        if (gameManager != null)
+        {
+            float progress = Mathf.Clamp01((float)currentWave / waves.Count);
+            gameManager.SetBarProgress(progress);
+        }
+    }
+
     void TryWin()
     {
-        // All waves spawned & cleared
         if (gameManager != null)
+        {
+            gameManager.SetBarProgress(1f);
             gameManager.WinGame();
+        }
         else
+        {
             SceneManager.LoadScene("Steven - Winning");
+        }
     }
 }
