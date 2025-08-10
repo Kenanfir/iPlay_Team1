@@ -22,7 +22,6 @@ public class StartingManager : MonoBehaviour
 
     void Update()
     {
-        // Manual skip by tap or click
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
             ManualSkip();
@@ -44,7 +43,6 @@ public class StartingManager : MonoBehaviour
 
     void ManualSkip()
     {
-        // If still auto-changing, stop and let user control
         if (autoChangeActive)
         {
             autoChangeActive = false;
@@ -58,21 +56,19 @@ public class StartingManager : MonoBehaviour
         currentIndex++;
         Debug.Log("Current Index: " + currentIndex);
 
-        // Go to game scene after index 7
         if (currentIndex == 7)
         {
             SceneManager.LoadScene("Game Scene");
             return;
         }
 
-        // If reached end, show main menu and stop auto-change
         if (currentIndex >= startingScreen.Length)
         {
             foreach (var img in startingScreen)
                 img.gameObject.SetActive(false);
 
             MainMenuScreen.SetActive(true);
-            autoChangeActive = false; // Stop auto cycling
+            autoChangeActive = false;
         }
         else
         {
