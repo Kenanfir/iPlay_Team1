@@ -49,7 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 6
   invincibilityDuration: 2
-  damageSound: {fileID: 0}
+  damageSound: {fileID: 8300000, guid: 34d7a759c4852401f9159ab627ad3f23, type: 3}
   cameraController: {fileID: 0}
   playerSpritePrefab: {fileID: 6274540775640895810, guid: 43a068ef6760446089066e80039fae1a, type: 3}
   flashlightPrefab: {fileID: 6164593295395249626, guid: fe7cfcbed10fc47f493881bdccf36221, type: 3}
