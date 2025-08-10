@@ -2,26 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(LineRenderer))]
 public class CompanionController : MonoBehaviour
 {
-    // Define the states the companion can be in
-    public enum CompanionState
-    {
-        Idle,
-        Chasing,
-        Attacking,
-        Cooldown
-    }
+    public enum CompanionState { Idle, Chasing, Attacking, Cooldown }
 
     [Header("Companion Stats")]
     public int maxHealth = 6;
     public float moveSpeed = 2f;
-    public float attackRange = 0.5f; // Keep this value small
+    public float attackRange = 0.5f;
+    private int currentHealth;
 
     [Header("Attack Timings")]
-    [Tooltip("Time between the two slashes in a combo.")]
     public float attackInterval = 0.2f;
-    [Tooltip("Time after a combo before the companion can attack again.")]
     public float attackCooldown = 0.5f;
 
     // State Machine
@@ -36,36 +29,39 @@ public class CompanionController : MonoBehaviour
     // Components & References
     private Rigidbody2D rb;
     private Animator animator;
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
     private LightDetector lightCone;
+    private LineRenderer lineRenderer; // Check path to enemy
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        lineRenderer = GetComponent<LineRenderer>();
     }
 
     void Start()
     {
+        currentHealth = maxHealth;
         currentState = CompanionState.Idle;
         slashesLeft = 2;
+        if (spriteRenderer != null)
+        {
+            originalColor = spriteRenderer.color;
+        }
+        lineRenderer.positionCount = 0;
     }
 
     void Update()
     {
         switch (currentState)
         {
-            case CompanionState.Idle:
-                HandleIdleState();
-                break;
-            case CompanionState.Chasing:
-                HandleChasingState();
-                break;
-            case CompanionState.Attacking:
-                HandleAttackingState();
-                break;
-            case CompanionState.Cooldown:
-                HandleCooldownState();
-                break;
+            case CompanionState.Idle: HandleIdleState(); break;
+            case CompanionState.Chasing: HandleChasingState(); break;
+            case CompanionState.Attacking: HandleAttackingState(); break;
+            case CompanionState.Cooldown: HandleCooldownState(); break;
         }
     }
 
@@ -73,18 +69,15 @@ public class CompanionController : MonoBehaviour
     {
         rb.velocity = Vector2.zero;
         if(animator != null) animator.SetBool("isChasing", false);
+        lineRenderer.positionCount = 0; 
 
         if (isLitByPlayer)
         {
             if (lightCone == null)
             {
                 lightCone = FindObjectOfType<LightDetector>();
-                if (lightCone == null)
-                {
-                    return; 
-                }
+                if (lightCone == null) return;
             }
-            
             FindClosestEnemyInLight();
             if (targetEnemy != null)
             {
@@ -99,7 +92,6 @@ public class CompanionController : MonoBehaviour
         {
             currentState = CompanionState.Idle;
             targetEnemy = null;
-            rb.velocity = Vector2.zero;
             return;
         }
 
@@ -107,7 +99,11 @@ public class CompanionController : MonoBehaviour
 
         Vector2 direction = (targetEnemy.position - transform.position).normalized;
         rb.velocity = direction * moveSpeed;
-        // Debug.Log("Chasing enemy");
+
+        // --- NEW: Draw the path line ---
+        lineRenderer.positionCount = 2;
+        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(1, targetEnemy.position);
 
         if (Vector2.Distance(transform.position, targetEnemy.position) <= attackRange)
         {
@@ -118,6 +114,7 @@ public class CompanionController : MonoBehaviour
 
     private void HandleAttackingState()
     {
+        lineRenderer.positionCount = 0;
         if (targetEnemy == null || Vector2.Distance(transform.position, targetEnemy.position) > attackRange)
         {
             currentState = CompanionState.Chasing;
@@ -128,8 +125,6 @@ public class CompanionController : MonoBehaviour
         {
             lastActionTime = Time.time;
             slashesLeft--;
-
-            // --- FIX: Trigger the attack animation ---
             if(animator != null) animator.SetTrigger("isAttacking");
 
             if (slashesLeft <= 0)
@@ -148,6 +143,9 @@ public class CompanionController : MonoBehaviour
         }
     }
 
+    // --- HELPER & DETECTION METHODS ---
+    // (The rest of the script remains the same)
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("PlayerLight"))
@@ -163,7 +161,7 @@ public class CompanionController : MonoBehaviour
             isLitByPlayer = false;
         }
     }
-
+    
     private void FindClosestEnemyInLight()
     {
         targetEnemy = null;
@@ -185,4 +183,38 @@ public class CompanionController : MonoBehaviour
             }
         }
     }
+
+    public void TakeDamage(int damageAmount)
+    {
+        currentHealth -= damageAmount;
+        Debug.Log("Companion took damage! Health is now " + currentHealth);
+
+        if (animator != null)
+        {
+            animator.SetTrigger("isDamaged");
+        }
+
+        StartCoroutine(HurtFlashCoroutine());
+
+        if (currentHealth <= 0)
+        {
+            // Death Logic
+            
+        }
+    }
+
+    private IEnumerator HurtFlashCoroutine()
+    {
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = Color.red;
+            yield return new WaitForSeconds(1f);
+            spriteRenderer.color = originalColor;
+        }
+    }
 }
+
+    
+
+   
+    
