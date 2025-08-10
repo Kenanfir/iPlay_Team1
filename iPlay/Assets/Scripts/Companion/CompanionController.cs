@@ -72,7 +72,6 @@ public class CompanionController : MonoBehaviour
     private void HandleIdleState()
     {
         rb.velocity = Vector2.zero;
-        // --- FIX: Tell the animator we are NOT chasing ---
         if(animator != null) animator.SetBool("isChasing", false);
 
         if (isLitByPlayer)
@@ -104,11 +103,11 @@ public class CompanionController : MonoBehaviour
             return;
         }
 
-        // --- FIX: Tell the animator we ARE chasing ---
         if(animator != null) animator.SetBool("isChasing", true);
 
         Vector2 direction = (targetEnemy.position - transform.position).normalized;
         rb.velocity = direction * moveSpeed;
+        // Debug.Log("Chasing enemy");
 
         if (Vector2.Distance(transform.position, targetEnemy.position) <= attackRange)
         {

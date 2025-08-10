@@ -17,6 +17,10 @@ public class PlayerController : MonoBehaviour
     public float invincibilityDuration = 2f;
     private float lastDamageTime;
 
+    [Header("SFX")]
+    [Tooltip("The sound effect to play when the player gets hit.")]
+    public AudioClip damagedSound; 
+
     [Header("Movement")]
     [Tooltip("How fast the player moves.")]
     public float moveSpeed = 5f;
@@ -27,6 +31,8 @@ public class PlayerController : MonoBehaviour
     [Tooltip("How smoothly the flashlight rotates to the aim direction. Smaller is slower.")]
     public float aimSpeed = 10f;
 
+    public CameraController cameraController;
+
     // Private components
     private Rigidbody2D rb;
     private GameObject playerSpriteInstance;
@@ -35,6 +41,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 moveDirection;
     private Vector2 aimDirection;
     private Animator animator;
+    private AudioSource audioSource;
 
     void Awake()
     {
@@ -43,9 +50,11 @@ public class PlayerController : MonoBehaviour
         {
             rb = gameObject.AddComponent<Rigidbody2D>();
         }
-        rb.gravityScale = 0; 
-        rb.drag = 10f; 
+        rb.gravityScale = 0;
+        rb.drag = 10f;
         rb.freezeRotation = true;
+        
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Start()
@@ -108,6 +117,19 @@ public class PlayerController : MonoBehaviour
             currentHealth -= damageAmount;
             Debug.Log("Player took " + damageAmount + " damage. Current health: " + currentHealth);
             
+            if (damagedSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(damagedSound);
+            }
+
+            if (cameraController != null)
+            {
+                cameraController.TriggerDamageEffects();
+            }
+        
+            // Trigger haptic feedback
+            Handheld.Vibrate();
+
             animator?.SetTrigger("isDamaged");
 
             if (currentHealth <= 0)
