@@ -38,7 +38,7 @@ public class StartingManager : MonoBehaviour
         if (currentIndex == 7)
         {
             // masuk ke scene game
-            SceneManager.LoadScene("");
+            SceneManager.LoadScene("Game Scene");
         }
 
         if (currentIndex == startingScreen.Length)
